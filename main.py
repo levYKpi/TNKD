@@ -3,6 +3,7 @@
 ############ BINLST = D1, D2, D3, D6, D8, C1, C2, C4, C5, C6, B1, B2, B4, B5, M1, M2, A1, A2, Pr1, Pr2, Pr3, Pr5, Pr6 #
 ############           0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17   18   19   20   21   22 #
 
+
 def aFun(binLst):
     D6 = binLst[3]
     C4 = binLst[7]
@@ -39,3 +40,25 @@ def dFun(binLst):
     Pr1, Pr2, Pr3 = binLst[18], binLst[19], binLst[20]
     result = D2 and D3 and C2 and (B1 or B2) and (Pr1 or Pr2 or Pr3)
     return result
+
+
+def vectorGenerator(target, zeros, result = None):
+    pack = []
+
+    def subPackGenerator(target, result):
+        used = []
+        for i, item in enumerate(target):
+            if item != 0 and i not in used:
+                newPack = target.copy()
+                newPack[i] = 0
+                if newPack not in result:
+                    result.append(newPack)
+                used.append(i)
+
+    if result:
+        for subPack in result:
+            subPackGenerator(subPack, pack)
+    else:
+        subPackGenerator(target, pack)
+
+    return pack if zeros == 1 else vectorGenerator(target, zeros-1, pack)
