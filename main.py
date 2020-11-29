@@ -13,27 +13,6 @@ def aFun(binLst):
     return result
 
 
-def vectorGenerator(target, zeros, result = None):
-    pack = []
-
-    def subPackGenerator(target, result):
-        used = []
-        for i, item in enumerate(target):
-            if item != 0 and i not in used:
-                newPack = target.copy()
-                newPack[i] = 0
-                if newPack not in result:
-                    result.append(newPack)
-                used.append(i)
-
-    if result:
-        for subPack in result:
-            subPackGenerator(subPack, pack)
-    else:
-        subPackGenerator(target, pack)
-
-    return pack if zeros == 1 else vectorGenerator(target, zeros-1, pack)
-
 def bFun(binLst):
     D8 = binLst[4]
     C5, C6 = binLst[8], binLst[9]
@@ -61,3 +40,25 @@ def dFun(binLst):
     Pr1, Pr2, Pr3 = binLst[18], binLst[19], binLst[20]
     result = D2 and D3 and C2 and (B1 or B2) and (Pr1 or Pr2 or Pr3)
     return result
+
+
+def vectorGenerator(target, zeros, result = None):
+    pack = []
+
+    def subPackGenerator(target, result):
+        used = []
+        for i, item in enumerate(target):
+            if item != 0 and i not in used:
+                newPack = target.copy()
+                newPack[i] = 0
+                if newPack not in result:
+                    result.append(newPack)
+                used.append(i)
+
+    if result:
+        for subPack in result:
+            subPackGenerator(subPack, pack)
+    else:
+        subPackGenerator(target, pack)
+
+    return pack if zeros == 1 else vectorGenerator(target, zeros-1, pack)
