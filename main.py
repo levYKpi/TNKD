@@ -2,7 +2,14 @@
 ############ FUNCTIONS ################################################################################################
 ############ BINLST = D1, D2, D3, D6, D8, C1, C2, C4, C5, C6, B1, B2, B4, B5, M1, M2, A1, A2, Pr1, Pr2, Pr3, Pr5, Pr6 #
 ############           0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17   18   19   20   21   22 #
+from table import create_table as ct
 
+BINLST = [
+    'D1', 'D2', 'D3', 'D6', 'D8', 'C1', 'C2', 'C4', 'C5', 'C6', 'B1', 'B2', 'B4', 'B5', 'M1', 'M2', 'A1', 'A2',
+    'PR1', 'PR2', 'PR3', 'PR5', 'PR6'
+]
+Dlist = dict(zip(BINLST, list(range(23))))
+Table = ct()
 
 def aFun(binLst):
     D6 = binLst[3]
@@ -69,14 +76,218 @@ def vectorGenerator(target, zeros, result = None):
     return pack if zeros == 1 else vectorGenerator(target, zeros-1, pack)
 
 
+def pick_proc_PR1(Tmax, Tcurrent):
+    if Tcurrent[2] + 20 <= Tmax[2]:
+        Tcurrent[2] += 20
+    elif Tcurrent[1] + 10 <= Tmax[1] and Tcurrent[3] + 10 <= Tmax[3]:
+        Tcurrent[1] += 10
+        Tcurrent[3] += 10
+    elif Tcurrent[3] + 10 <= Tmax[3] and Tcurrent[4] + 10 <= Tmax[4]:
+        Tcurrent[3] += 10
+        Tcurrent[4] += 10
+    elif Tcurrent[1] + 10 <= Tmax[1] and Tcurrent[4] + 10 <= Tmax[4]:
+        Tcurrent[1] += 10
+        Tcurrent[4] += 10
+    else:
+        Tcurrent[0] *= -1
+    return Tcurrent
+
+
+def pick_proc_PR2(Tmax, Tcurrent):
+    if Tcurrent[0] + 40 <= Tmax[0]:
+        Tcurrent[0] += 40
+    elif Tcurrent[2] + 40 <= Tmax[2]:
+        Tcurrent[2] += 40
+    else:
+        Tcurrent[1] *= -1
+    return Tcurrent
+
+
+def pick_proc_PR3(Tmax, Tcurrent):
+    if Tcurrent[0] + 50 <= Tmax[0]:
+        Tcurrent[0] += 50
+    elif Tcurrent[1] + 50 <= Tmax[1]:
+        Tcurrent[1] += 50
+    else:
+        Tcurrent[2] *= -1
+    return Tcurrent
+
+def pick_proc_PR5(Tmax, Tcurrent):
+    if Tcurrent[0] + 50 <= Tmax[0] and Tcurrent[1] + 20 <= Tmax[1]:
+        Tcurrent[0] += 50
+        Tcurrent[1] += 20
+    elif Tcurrent[2] + 50 <= Tmax[2] and Tcurrent[1] + 20 <= Tmax[1]:
+        Tcurrent[2] += 50
+        Tcurrent[1] += 20
+    elif Tcurrent[0] + 50 <= Tmax[0] and Tcurrent[4] + 20 <= Tmax[4]:
+        Tcurrent[0] += 50
+        Tcurrent[4] += 20
+    elif Tcurrent[2] + 50 <= Tmax[2] and Tcurrent[4] + 20 <= Tmax[4]:
+        Tcurrent[2] += 50
+        Tcurrent[4] += 20
+    else:
+        Tcurrent[3] *= -1
+    return Tcurrent
+
+
+def pick_proc_PR6(Tmax, Tcurrent):
+    if Tcurrent[1] + 30 <= Tmax[1]:
+        Tcurrent[1] += 30
+    elif Tcurrent[2] + 30 <= Tmax[1]:
+        Tcurrent[2] += 30
+    elif Tcurrent[3] + 30 <= Tmax[3]:
+        Tcurrent[3] += 30
+    else:
+        Tcurrent[4] *= -1
+    return Tcurrent
+
+
 def distribute(lst1):
-    lst2 = []
+    working = sum(lst1)
+    Tmax = [70, 100, 100, 90, 50]
+    Tcurrent = [20, 40, 50, 70, 30]
+    if working == 22:
+        if not lst1[Dlist['PR1']]:
+            Tcurrent = pick_proc_PR1(Tmax, Tcurrent)
+        if not lst1[Dlist['PR2']]:
+            Tcurrent = pick_proc_PR2(Tmax, Tcurrent)
+        if not lst1[Dlist['PR3']]:
+            Tcurrent = pick_proc_PR3(Tmax, Tcurrent)
+        if not lst1[Dlist['PR5']]:
+            Tcurrent = pick_proc_PR5(Tmax, Tcurrent)
+        if not lst1[Dlist['PR6']]:
+            Tcurrent = pick_proc_PR6(Tmax, Tcurrent)
+    if working == 21:
+        if (not lst1[Dlist['PR1']]) and (not lst1[Dlist['PR2']]):
+            Tcurrent = pick_proc_PR1(Tmax, Tcurrent)
+            Tcurrent = pick_proc_PR2(Tmax, Tcurrent)
+        if (not lst1[Dlist['PR1']]) and (not lst1[Dlist['PR3']]):
+            Tcurrent = pick_proc_PR1(Tmax, Tcurrent)
+            Tcurrent = pick_proc_PR3(Tmax, Tcurrent)
+        if (not lst1[Dlist['PR1']]) and (not lst1[Dlist['PR5']]):
+            Tcurrent = pick_proc_PR1(Tmax, Tcurrent)
+            Tcurrent = pick_proc_PR5(Tmax, Tcurrent)
+        if (not lst1[Dlist['PR1']]) and (not lst1[Dlist['PR6']]):
+            Tcurrent = pick_proc_PR1(Tmax, Tcurrent)
+            Tcurrent = pick_proc_PR6(Tmax, Tcurrent)
+        if (not lst1[Dlist['PR2']]) and (not lst1[Dlist['PR3']]):
+            Tcurrent = pick_proc_PR2(Tmax, Tcurrent)
+            Tcurrent = pick_proc_PR3(Tmax, Tcurrent)
+        if (not lst1[Dlist['PR2']]) and (not lst1[Dlist['PR5']]):
+            Tcurrent = pick_proc_PR2(Tmax, Tcurrent)
+            Tcurrent = pick_proc_PR5(Tmax, Tcurrent)
+        if (not lst1[Dlist['PR2']]) and (not lst1[Dlist['PR6']]):
+            Tcurrent = pick_proc_PR2(Tmax, Tcurrent)
+            Tcurrent = pick_proc_PR6(Tmax, Tcurrent)
+        if (not lst1[Dlist['PR3']]) and (not lst1[Dlist['PR5']]):
+            Tcurrent = pick_proc_PR3(Tmax, Tcurrent)
+            Tcurrent = pick_proc_PR5(Tmax, Tcurrent)
+        if (not lst1[Dlist['PR3']]) and (not lst1[Dlist['PR6']]):
+            Tcurrent = pick_proc_PR3(Tmax, Tcurrent)
+            Tcurrent = pick_proc_PR6(Tmax, Tcurrent)
+        if (not lst1[Dlist['PR5']]) and (not lst1[Dlist['PR6']]):
+            Tcurrent = pick_proc_PR5(Tmax, Tcurrent)
+            Tcurrent = pick_proc_PR6(Tmax, Tcurrent)
+    if working == 20:
+        if (not lst1[Dlist['PR1']]) and (not lst1[Dlist['PR2']]) and (not lst1[Dlist['PR3']]):
+            Tcurrent = pick_proc_PR1(Tmax, Tcurrent)
+            Tcurrent = pick_proc_PR2(Tmax, Tcurrent)
+            Tcurrent = pick_proc_PR3(Tmax, Tcurrent)
+        if (not lst1[Dlist['PR1']]) and (not lst1[Dlist['PR2']]) and (not lst1[Dlist['PR5']]):
+            Tcurrent = pick_proc_PR1(Tmax, Tcurrent)
+            Tcurrent = pick_proc_PR2(Tmax, Tcurrent)
+            Tcurrent = pick_proc_PR5(Tmax, Tcurrent)
+        if (not lst1[Dlist['PR1']]) and (not lst1[Dlist['PR2']]) and (not lst1[Dlist['PR6']]):
+            Tcurrent = pick_proc_PR1(Tmax, Tcurrent)
+            Tcurrent = pick_proc_PR2(Tmax, Tcurrent)
+            Tcurrent = pick_proc_PR6(Tmax, Tcurrent)
+        if (not lst1[Dlist['PR1']]) and (not lst1[Dlist['PR3']]) and (not lst1[Dlist['PR5']]):
+            Tcurrent = pick_proc_PR1(Tmax, Tcurrent)
+            Tcurrent = pick_proc_PR3(Tmax, Tcurrent)
+            Tcurrent = pick_proc_PR5(Tmax, Tcurrent)
+        if (not lst1[Dlist['PR1']]) and (not lst1[Dlist['PR3']]) and (not lst1[Dlist['PR6']]):
+            Tcurrent = pick_proc_PR1(Tmax, Tcurrent)
+            Tcurrent = pick_proc_PR3(Tmax, Tcurrent)
+            Tcurrent = pick_proc_PR6(Tmax, Tcurrent)
+        if (not lst1[Dlist['PR1']]) and (not lst1[Dlist['PR5']]) and (not lst1[Dlist['PR6']]):
+            Tcurrent = pick_proc_PR1(Tmax, Tcurrent)
+            Tcurrent = pick_proc_PR5(Tmax, Tcurrent)
+            Tcurrent = pick_proc_PR6(Tmax, Tcurrent)
+        if (not lst1[Dlist['PR2']]) and (not lst1[Dlist['PR3']]) and (not lst1[Dlist['PR5']]):
+            Tcurrent = pick_proc_PR2(Tmax, Tcurrent)
+            Tcurrent = pick_proc_PR3(Tmax, Tcurrent)
+            Tcurrent = pick_proc_PR5(Tmax, Tcurrent)
+        if (not lst1[Dlist['PR2']]) and (not lst1[Dlist['PR3']]) and (not lst1[Dlist['PR6']]):
+            Tcurrent = pick_proc_PR2(Tmax, Tcurrent)
+            Tcurrent = pick_proc_PR3(Tmax, Tcurrent)
+            Tcurrent = pick_proc_PR6(Tmax, Tcurrent)
+        if (not lst1[Dlist['PR2']]) and (not lst1[Dlist['PR5']]) and (not lst1[Dlist['PR6']]):
+            Tcurrent = pick_proc_PR2(Tmax, Tcurrent)
+            Tcurrent = pick_proc_PR5(Tmax, Tcurrent)
+            Tcurrent = pick_proc_PR6(Tmax, Tcurrent)
+        if (not lst1[Dlist['PR3']]) and (not lst1[Dlist['PR5']]) and (not lst1[Dlist['PR6']]):
+            Tcurrent = pick_proc_PR3(Tmax, Tcurrent)
+            Tcurrent = pick_proc_PR5(Tmax, Tcurrent)
+            Tcurrent = pick_proc_PR6(Tmax, Tcurrent)
+    if working == 19:
+        if (not lst1[Dlist['PR1']]) and (not lst1[Dlist['PR2']])\
+            and (not lst1[Dlist['PR3']]) and (not lst1[Dlist['PR5']]):
+            Tcurrent = pick_proc_PR1(Tmax, Tcurrent)
+            Tcurrent = pick_proc_PR2(Tmax, Tcurrent)
+            Tcurrent = pick_proc_PR3(Tmax, Tcurrent)
+            Tcurrent = pick_proc_PR5(Tmax, Tcurrent)
+
+        if (not lst1[Dlist['PR1']]) and (not lst1[Dlist['PR2']]) \
+            and (not lst1[Dlist['PR3']]) and (not lst1[Dlist['PR6']]):
+            Tcurrent = pick_proc_PR1(Tmax, Tcurrent)
+            Tcurrent = pick_proc_PR2(Tmax, Tcurrent)
+            Tcurrent = pick_proc_PR3(Tmax, Tcurrent)
+            Tcurrent = pick_proc_PR6(Tmax, Tcurrent)
+
+        if (not lst1[Dlist['PR1']]) and (not lst1[Dlist['PR2']]) \
+            and (not lst1[Dlist['PR5']]) and (not lst1[Dlist['PR6']]):
+            Tcurrent = pick_proc_PR1(Tmax, Tcurrent)
+            Tcurrent = pick_proc_PR2(Tmax, Tcurrent)
+            Tcurrent = pick_proc_PR5(Tmax, Tcurrent)
+            Tcurrent = pick_proc_PR6(Tmax, Tcurrent)
+
+        if (not lst1[Dlist['PR1']]) and (not lst1[Dlist['PR3']]) \
+            and (not lst1[Dlist['PR5']]) and (not lst1[Dlist['PR6']]):
+            Tcurrent = pick_proc_PR1(Tmax, Tcurrent)
+            Tcurrent = pick_proc_PR3(Tmax, Tcurrent)
+            Tcurrent = pick_proc_PR5(Tmax, Tcurrent)
+            Tcurrent = pick_proc_PR6(Tmax, Tcurrent)
+
+        if (not lst1[Dlist['PR2']]) and (not lst1[Dlist['PR3']]) \
+            and (not lst1[Dlist['PR5']]) and (not lst1[Dlist['PR6']]):
+            Tcurrent = pick_proc_PR2(Tmax, Tcurrent)
+            Tcurrent = pick_proc_PR3(Tmax, Tcurrent)
+            Tcurrent = pick_proc_PR5(Tmax, Tcurrent)
+            Tcurrent = pick_proc_PR6(Tmax, Tcurrent)
+            # it is the end of the world as we know it
+    pr_lst = all([Tcurrent[i] < 0 for i in range(5)])
+    if pr_lst:
+        print("getting worse")
+    else:
+        print("better or same")
+        print(lst1[-6:-1])
+        print(Tcurrent)
+    lst2 = lst1[:]
+    # lst2[]
     return lst2
+
+
+def Pfunk(lst):
+    return None
 
 
 def workable(lst1):
     lst2 = distribute(lst1)
     ret2 = Funk(lst2)
-    w2 = PFunk(lst2)
     w1 = PFunk(lst1)
     return None
+
+if __name__ == "__main__":
+    lst = [1 for i in range(23)]
+    lst[-3] = 0
+    workable(lst)
