@@ -84,7 +84,8 @@ def vectorGenerator(target, zeros, result = None):
     return pack if zeros == 1 else vectorGenerator(target, zeros-1, pack)
 
 
-def pick_proc_PR1(Tmax, Tcurrent, lst):
+def pick_proc_PR1(Tmax, Tcur, lst):
+    Tcurrent = Tcur[:]
     if Tcurrent[2] + 20 <= Tmax[2] and lst[20]:
         Tcurrent[2] += 20
     elif Tcurrent[1] + 10 <= Tmax[1] and Tcurrent[3] + 10 <= Tmax[3] and lst[19] and lst[21]:
@@ -101,7 +102,8 @@ def pick_proc_PR1(Tmax, Tcurrent, lst):
     return Tcurrent
 
 
-def pick_proc_PR2(Tmax, Tcurrent, lst):
+def pick_proc_PR2(Tmax, Tcur, lst):
+    Tcurrent = Tcur[:]
     if Tcurrent[0] + 40 <= Tmax[0] and lst[18]:
         Tcurrent[0] += 40
     elif Tcurrent[2] + 40 <= Tmax[2] and lst[20]:
@@ -111,7 +113,8 @@ def pick_proc_PR2(Tmax, Tcurrent, lst):
     return Tcurrent
 
 
-def pick_proc_PR3(Tmax, Tcurrent, lst):
+def pick_proc_PR3(Tmax, Tcur, lst):
+    Tcurrent = Tcur[:]
     if Tcurrent[0] + 50 <= Tmax[0] and lst[18]:
         Tcurrent[0] += 50
     elif Tcurrent[1] + 50 <= Tmax[1] and lst[19]:
@@ -121,7 +124,8 @@ def pick_proc_PR3(Tmax, Tcurrent, lst):
     return Tcurrent
 
 
-def pick_proc_PR5(Tmax, Tcurrent, lst):
+def pick_proc_PR5(Tmax, Tcur, lst):
+    Tcurrent = Tcur[:]
     if Tcurrent[0] + 50 <= Tmax[0] and Tcurrent[1] + 20 <= Tmax[1] and lst[18] and lst[19]:
         Tcurrent[0] += 50
         Tcurrent[1] += 20
@@ -139,7 +143,8 @@ def pick_proc_PR5(Tmax, Tcurrent, lst):
     return Tcurrent
 
 
-def pick_proc_PR6(Tmax, Tcurrent, lst):
+def pick_proc_PR6(Tmax, Tcur, lst):
+    Tcurrent = Tcur[:]
     if Tcurrent[1] + 30 <= Tmax[1] and lst[19]:
         Tcurrent[1] += 30
     elif Tcurrent[2] + 30 <= Tmax[2] and lst[20]:
@@ -152,10 +157,10 @@ def pick_proc_PR6(Tmax, Tcurrent, lst):
 
 
 def distribute(lst1):
-    working = sum(lst1)
+    working = sum(lst1[18:])
     Tmax = [70, 100, 100, 90, 50]
     Tcurrent = [20, 40, 50, 70, 30]
-    if working == 22:
+    if working == 4:
         if not lst1[Dlist['PR1']]:
             Tcurrent = pick_proc_PR1(Tmax, Tcurrent, lst1)
         if not lst1[Dlist['PR2']]:
@@ -166,7 +171,7 @@ def distribute(lst1):
             Tcurrent = pick_proc_PR5(Tmax, Tcurrent, lst1)
         if not lst1[Dlist['PR6']]:
             Tcurrent = pick_proc_PR6(Tmax, Tcurrent, lst1)
-    if working == 21:
+    if working == 3:
         if (not lst1[Dlist['PR1']]) and (not lst1[Dlist['PR2']]):
             Tcurrent = pick_proc_PR1(Tmax, Tcurrent, lst1)
             Tcurrent = pick_proc_PR2(Tmax, Tcurrent, lst1)
@@ -197,7 +202,7 @@ def distribute(lst1):
         if (not lst1[Dlist['PR5']]) and (not lst1[Dlist['PR6']]):
             Tcurrent = pick_proc_PR5(Tmax, Tcurrent, lst1)
             Tcurrent = pick_proc_PR6(Tmax, Tcurrent, lst1)
-    if working == 20:
+    if working == 2:
         if (not lst1[Dlist['PR1']]) and (not lst1[Dlist['PR2']]) and (not lst1[Dlist['PR3']]):
             Tcurrent = pick_proc_PR1(Tmax, Tcurrent, lst1)
             Tcurrent = pick_proc_PR2(Tmax, Tcurrent, lst1)
@@ -238,7 +243,7 @@ def distribute(lst1):
             Tcurrent = pick_proc_PR3(Tmax, Tcurrent, lst1)
             Tcurrent = pick_proc_PR5(Tmax, Tcurrent, lst1)
             Tcurrent = pick_proc_PR6(Tmax, Tcurrent, lst1)
-    if working == 19:
+    if working == 1:
         if (not lst1[Dlist['PR1']]) and (not lst1[Dlist['PR2']])\
             and (not lst1[Dlist['PR3']]) and (not lst1[Dlist['PR5']]):
             Tcurrent = pick_proc_PR1(Tmax, Tcurrent, lst1)
@@ -277,7 +282,7 @@ def distribute(lst1):
     pr_lst = any([Tcurrent[i] < 0 for i in range(5)])
     lst2 = lst1[:]
     if pr_lst:
-        for i in range(-6, -1, 1):
+        for i in range(18, 23, 1):
             if lst2[i]:
                 lst2[i] *= -1
         print("getting worse")
@@ -293,7 +298,7 @@ def distribute(lst1):
     #     print("PR:  1,  2,  3,  4,  5")
     #     print("   %3d,%3d,%3d,%3d,%3d" % (lst[18], lst[19], lst[20], lst[21], lst[22]))
     else:
-        for i in range(-6, -1, 1):
+        for i in range(18, 23, 1):
             if not lst2[i]:
                 lst2[i] = -1
         print("better")
@@ -318,15 +323,20 @@ def PFunk(lst):
 def workable(lst1):
     print("--------------------------------------------------------------------------------------------")
     print(lst1)
-    if Funk(lst1):
-        print("system was working")
+    was_working = Funk(lst1)
+    if was_working:
+        print("system was working by Function")
     else:
         print("system was not working")
-    if numpy.prod(lst1[0:18]):
+    if_all_proc = lst1[0:18]
+    for i in range(5):
+        if_all_proc.append(1)
+    if_all_proc = Funk(if_all_proc)
+    if if_all_proc and not all(lst1[18:]):
         lst2 = distribute(lst1)
-        ret2 = Funk(numpy.abs(lst2))
-        if ret2:
-            print("system is working")
+        # ret2 = Funk(numpy.abs(lst2))
+        # if ret2:
+        #     print("system is working")
     w1 = PFunk(lst1)
     print(w1)
     return w1
@@ -347,7 +357,7 @@ def two_exception():
 def tree_exception():
     exceptions = vectorGenerator([1 for _ in range(23)], 3)
     results = []
-    for i in range(1336, len(exceptions), 2):
+    for i in range(0, len(exceptions), 2):
         print(i)
         results.append(workable(exceptions[i]))
     return results
