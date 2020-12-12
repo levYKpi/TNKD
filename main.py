@@ -42,6 +42,11 @@ def dFun(binLst):
     return result
 
 
+def Funk(lst):
+    ret = aFun(lst) * bFun(lst) * cFun(lst) * dFun(lst)
+    return ret
+
+
 def vectorGenerator(target, zeros, result = None):
     pack = []
 
@@ -62,3 +67,16 @@ def vectorGenerator(target, zeros, result = None):
         subPackGenerator(target, pack)
 
     return pack if zeros == 1 else vectorGenerator(target, zeros-1, pack)
+
+
+def distribute(lst1):
+    lst2 = []
+    return lst2
+
+
+def workable(lst1):
+    lst2 = distribute(lst1)
+    ret2 = Funk(lst2)
+    w2 = PFunk(lst2)
+    w1 = PFunk(lst1)
+    return None
