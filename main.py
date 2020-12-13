@@ -319,6 +319,7 @@ def PFunk(lst):
     P = numpy.prod(values)
     return P
 
+lst_stat = [0 for _ in range(23)]
 
 def workable(lst1):
     print("--------------------------------------------------------------------------------------------")
@@ -328,6 +329,8 @@ def workable(lst1):
         print("system was working by Function")
     else:
         print("system was not working")
+        for i in range(23):
+            lst_stat[i] += lst1[i]
     if_all_proc = lst1[0:18]
     for i in range(5):
         if_all_proc.append(1)
@@ -357,8 +360,8 @@ def two_exception():
 def tree_exception():
     exceptions = vectorGenerator([1 for _ in range(23)], 3)
     results = []
-    for i in range(0, len(exceptions), 2):
-        print(i)
+    for i in range(1, len(exceptions), 2):
+        # print(i)
         results.append(workable(exceptions[i]))
     return results
 
@@ -379,7 +382,18 @@ if __name__ == "__main__":
     # lst[-4] = 0
     # # lst[-5] = 0
     # workable(lst)
-    #one_exception()
-    #two_exception()
-    tree_exception()
-    #four_exception()
+    res1 = numpy.array(one_exception())
+    res2 = numpy.array(two_exception())
+    res3 = numpy.array(tree_exception())*2
+    res4 = numpy.array(four_exception())*10
+    print("statistic")
+    stat_dict = {}
+    for key, val in Dlist.items():
+        stat_dict[key] = lst_stat[val]
+        # print((key, val))
+    for i in range(100000):
+        for key, val in stat_dict.items():
+            if i == val:
+                print((key, "->", val))
+    print("P_res:")
+    print(numpy.sum(res1) + numpy.sum(res2) + numpy.sum(res3) + numpy.sum(res4))
